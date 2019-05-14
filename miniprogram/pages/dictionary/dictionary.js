@@ -104,9 +104,12 @@ Page({
       default:
         break;
     }
-    for (let i of currentWordsList){
-      i.mask = true
+    if(this.data.isMask){
+      for (let i of currentWordsList) {
+        i.mask = true
+      }
     }
+
     that.setData({
       currentWordsList: currentWordsList
     })
