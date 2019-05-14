@@ -69,7 +69,8 @@ App({
   },
 
   resetProgress: function(task) {
-    var progress = {
+    console.log(task)
+    var progress1 = {
       globalTimeCount: 0,
       localTimeCount: 0,
       complete: false,
@@ -80,11 +81,25 @@ App({
       easyWords: [],
       startTime: (new Date()).getTime()
     }
-    progress.totalNum = task.newWords.length;
-    progress.unstudyWords = task.newWords;
-    wx.setStorageSync('newWordsProgress', progress);
-    progress.totalNum = task.oldWords.length;
-    progress.unstudyWords = task.oldWords;
-    wx.setStorageSync('oldWordsProgress', progress);
+    var progress2 = {
+      type: 0,
+      globalTimeCount: 0,
+      localTimeCount: 0,
+      complete: false,
+      totalNum: 0,
+      unstudyWords: [],
+      studingWords: [],
+      studiedWords: [],
+      easyWords: [],
+      startTime: (new Date()).getTime()
+    }
+    progress1.totalNum = task.newWords.length;
+    progress1.unstudyWords = task.newWords;
+    progress1.type = 0
+    wx.setStorageSync('newWordsProgress', progress1);
+    progress2.totalNum = task.oldWords.length;
+    progress2.unstudyWords = task.oldWords;
+    progress2.type = 1
+    wx.setStorageSync('oldWordsProgress', progress2);
   }
 })
