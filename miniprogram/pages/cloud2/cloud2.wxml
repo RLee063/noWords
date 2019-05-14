@@ -1,11 +1,11 @@
 
 <view class="tagBall">
-  <view wx:for="{{tagEle}}" wx:key="{{index}}">
+  <view wx:for="{{wordList}}" wx:key="{{index}}">
     <a wx:if="{{item.center}}" class="tag-center" style="opacity:{{item.o}};z-index:{{item.z}};left: {{item.x}}rpx;top: {{item.y}}rpx;transform: scale({{item.s}})">
-      {{item.title}}
+      {{item.name}}
     </a>
     <a wx:else catchtap="selectWord" data-index="{{index}}" class='{{item.selected?"tag-hover":"tag"}}' style="opacity:{{item.o}};z-index:{{item.z}};left: {{item.x}}rpx;top: {{item.y}}rpx;transform: scale({{item.s}})">
-      {{item.title}}
+      {{item.name}}
     </a>
   </view>
 </view>

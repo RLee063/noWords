@@ -2,8 +2,8 @@ var angleX = Math.PI / 200
 var angleY = Math.PI / 200
 var angleZ = Math.PI / 200
 const app = getApp()
-const size = 550
-
+const size = 450
+var that 
 Page({
 
   /**
@@ -11,251 +11,57 @@ Page({
    */
   data: {
     queryWordInfo: {},
-    word: "100"
+    word: ""
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    this.innit()
-  },
-  innit() {
-    var tagEle = [
-      {
-        title: 'CENTER',
-        x: 0,
-        y: 0,
-        z: 0,
-        s: 0,
-        o: 1,
-        f: 15,
-        angleX: 0,
-        angleY: 0
+    that = this
+    console.log(options.name)
+    wx.cloud.callFunction({
+      name: 'getVectors',
+      data: {
+        Wid: options.Wid,
+        name: options.name
       },
-      {
-        title: '咖啡機',
-        x: 0,
-        y: 0,
-        z: 0,
-        s: 0,
-        o: 1,
-        f: 15,
-        angleX: 0,
-        angleY: 0
+      success: res => {
+        console.log(res)
+        that.setData({
+          wordList: res.result.wordList,
+          word: options.name
+        })
+        this.innit()
       },
-      {
-        title: '飛機',
-        x: 0,
-        y: 0,
-        z: 0,
-        s: 0,
-        o: 1,
-        f: 15,
-        angleX: 0,
-        angleY: 0
-      },
-      {
-        title: '电脑',
-        x: 0,
-        y: 0,
-        z: 0,
-        s: 0,
-        o: 1,
-        f: 15,
-        angleX: 0,
-        angleY: 0
-      },
-      {
-        title: '手机',
-        x: 0,
-        y: 0,
-        z: 0,
-        s: 0,
-        o: 1,
-        f: 15,
-        angleX: 0,
-        angleY: 0
-      },
-      {
-        title: '键盘',
-        x: 0,
-        y: 0,
-        z: 0,
-        s: 0,
-        o: 1,
-        f: 15,
-        angleX: 0,
-        angleY: 0
-      },
-      {
-        title: '奶飞机',
-        x: 0,
-        y: 0,
-        z: 0,
-        s: 0,
-        o: 1,
-        f: 15,
-        angleX: 0,
-        angleY: 0
-      },
-      {
-        title: '桌子',
-        x: 0,
-        y: 0,
-        z: 0,
-        s: 0,
-        o: 1,
-        f: 15,
-        angleX: 0,
-        angleY: 0
-      },
-      {
-        title: '板凳',
-        x: 0,
-        y: 0,
-        z: 0,
-        s: 0,
-        o: 1,
-        f: 15,
-        angleX: 0,
-        angleY: 0
-      },
-      {
-        title: '杯子',
-        x: 0,
-        y: 0,
-        z: 0,
-        s: 0,
-        o: 1,
-        f: 15,
-        angleX: 0,
-        angleY: 0
-      },
-      {
-        title: '被子',
-        x: 0,
-        y: 0,
-        z: 0,
-        s: 0,
-        o: 1,
-        f: 15,
-        angleX: 0,
-        angleY: 0
-      },
-      {
-        title: '咖啡機',
-        x: 0,
-        y: 0,
-        z: 0,
-        s: 0,
-        o: 1,
-        f: 15,
-        angleX: 0,
-        angleY: 0
-      },
-      {
-        title: '飛機',
-        x: 0,
-        y: 0,
-        z: 0,
-        s: 0,
-        o: 1,
-        f: 15,
-        angleX: 0,
-        angleY: 0
-      },
-      {
-        title: '电脑',
-        x: 0,
-        y: 0,
-        z: 0,
-        s: 0,
-        o: 1,
-        f: 15,
-        angleX: 0,
-        angleY: 0
-      },
-      {
-        title: '手机',
-        x: 0,
-        y: 0,
-        z: 0,
-        s: 0,
-        o: 1,
-        f: 15,
-        angleX: 0,
-        angleY: 0
-      },
-      {
-        title: '键盘',
-        x: 0,
-        y: 0,
-        z: 0,
-        s: 0,
-        o: 1,
-        f: 15,
-        angleX: 0,
-        angleY: 0
-      },
-      {
-        title: '奶飞机',
-        x: 0,
-        y: 0,
-        z: 0,
-        s: 0,
-        o: 1,
-        f: 15,
-        angleX: 0,
-        angleY: 0
-      },
-      {
-        title: '桌子',
-        x: 0,
-        y: 0,
-        z: 0,
-        s: 0,
-        o: 1,
-        f: 15,
-        angleX: 0,
-        angleY: 0
-      },
-      {
-        title: '板凳',
-        x: 0,
-        y: 0,
-        z: 0,
-        s: 0,
-        o: 1,
-        f: 15,
-        angleX: 0,
-        angleY: 0
-      },
-      {
-        title: '杯子',
-        x: 0,
-        y: 0,
-        z: 0,
-        s: 0,
-        o: 1,
-        f: 15,
-        angleX: 0,
-        angleY: 0
+      fail: err => {
+        wx.showToast({
+          name: '获取词向量失败',
+          icon: 'none',
+          duration: 2000
+        })
+        setTimeout(() => {
+          wx.navigateBack({
+            delta: 1
+          })
+        }, 2000)
       }
-    ]
-    var words = tagEle
-    words[0].x = -25;
-    words[0].y = 0;
-    words[0].z = 0;
-    words[0].s = 1;
-    words[0].center = 1;
-    for (var i = 1; i < words.length; i++) {
-      words[i].x = size * Math.random() - (size / 2)
-      words[i].y = size * Math.random() - (size / 2)
-      words[i].z = size * Math.random() - (size / 2)
-      words[i].s = (words[i].z + size) / size
+    })
+  },
+
+  innit() {
+    var words = that.data.wordList
+
+    for (var i = 0; i < words.length; i++) {
+      words[i].x = size * words[i].x - (size / 2)
+      words[i].y = size * words[i].y - (size / 2)
+      words[i].z = size * words[i].z - (size / 2)
+      words[i].s = (words[i].z + size) / size +0.3
+      words[i].o = (words[i].z + size) / size + 0.5
+      if(words[i].name == this.data.word){
+        words[i].center = true
+      }
     }
-    //动画
     setInterval(() => {
       var cosx = Math.cos(angleX)
       var sinx = Math.sin(angleX)
@@ -264,7 +70,7 @@ Page({
       var cosz = Math.cos(angleZ)
       var sinz = Math.sin(angleZ)
 
-      for (var i = 1; i < tagEle.length; i++) {
+      for (var i = 0; i < words.length; i++) {
         var y1 = words[i].y * cosx - words[i].z * sinx
         var z1 = words[i].z * cosx + words[i].y * sinx
         words[i].y = y1
@@ -279,10 +85,12 @@ Page({
         var y3 = words[i].y * cosz + words[i].x * sinz
         words[i].x = x3
         words[i].y = y3
-        words[i].s = (words[i].z + size) / size
+        words[i].s = (words[i].z*0.5 + size) / size + 0.3
+        words[i].o = (words[i].z + size) / size + 0.3
         this.setData({
-          tagEle: words
+          wordList: words
         })
+        console.log(that.data.wordList)
       }
     }, 100)
   },
@@ -337,29 +145,29 @@ Page({
   },
   exitQuery: function (e) {
     console.log(this.data)
-    var tagEle = this.data.tagEle;
-    for (var i = 0; i < tagEle.length; i++) {
-      tagEle[i].selected = false
+    var wordList = this.data.wordList;
+    for (var i = 0; i < wordList.length; i++) {
+      wordList[i].selected = false
     }
     this.setData({
-      tagEle: tagEle,
+      wordList: wordList,
       isQuery: false
     })
   },
 
   selectWord: function (e) {
     console.log(this.data)
-    var tagEle = this.data.tagEle;
+    var wordList = this.data.wordList;
     // wordInfo.magicSentence[e.currentTarget.dataset.index].selected = !wordInfo.magicSentence[e.currentTarget.dataset.index].selected;
     var word;
-    for (var i = 0; i < tagEle.length; i++) {
+    for (var i = 0; i < wordList.length; i++) {
       if (i != e.currentTarget.dataset.index) {
-        tagEle[i].selected = false;
+        wordList[i].selected = false;
       }
       else {
-        if (tagEle[i].selected != true) {
-          tagEle[i].selected = true;
-          word = tagEle[i].title;
+        if (wordList[i].selected != true) {
+          wordList[i].selected = true;
+          word = wordList[i].name;
         }
         else {
           return
@@ -375,10 +183,10 @@ Page({
     wordInfo.soundmark = "/a'res/";
     wordInfo.sentenceMeaning = "且随疾风前行";
     //查询单词等待回调
-    console.log(tagEle)
+    console.log(wordList)
     this.setData({
       queryWordInfo: wordInfo,
-      tagEle: tagEle,
+      wordList: wordList,
       isQuery: true
     })
   },
