@@ -67,7 +67,9 @@ Page({
   },
 
   search: function(){
-    console.log(this.data.searchText)
+    wx.navigateTo({
+      url: '../wordInfo/wordInfo?name=' + this.data.searchText,
+    })
     this.setData({
       searchText: ""
     })
