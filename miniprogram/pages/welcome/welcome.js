@@ -19,6 +19,11 @@ Page({
     var lastLoginDate;
     if(lastLoginDate = wx.getStorageSync('lastLoginDate')){
       if(this.isToday(lastLoginDate)){
+        setInterval(() => {
+          wx.switchTab({
+            url: '../home/home',
+          })
+        }, 3000) 
         return;
       }
     }
@@ -99,16 +104,25 @@ Page({
     progress2.unstudyWords = task.oldWords;
     progress2.type = 1
     wx.setStorageSync('oldWordsProgress', progress2);
+    setInterval(() => {
+      wx.switchTab({
+        url: '../home/home',
+      })
+    }, 1000) 
   },
   login:function(options) {
     wx.cloud.callFunction({
       name: 'login',
       success: res=>{
-        setInterval(() => {
-          wx.switchTab({
-            url: '../home/home',
-          })}, 3000) 
         this.initTask()
+      },
+      fail: err => {
+        console.log(err)
+        wx.showToast({
+          title: '登陆失败',
+          icon: 'none',
+          duration: 2000
+        })
       }
     })
   },
