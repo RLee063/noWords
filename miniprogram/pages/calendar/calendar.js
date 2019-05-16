@@ -8,7 +8,7 @@ Page({
     isToday: 0,
     isTodayWeek: false,
     todayIndex: 0,
-    signed:[
+    signedRecord:[
       {
         year: 2019,
         month: 4,
@@ -18,13 +18,26 @@ Page({
         year: 2019,
         month: 3,
         day: 20
+      },
+      {
+        year: 2019,
+        month: 4,
+        day: 16
       }
     ]
   },
   onLoad: function () {
-    this.monthInit()
-    this.statusInit()
-    console.log(this.data)
+    var that = this
+    wx.cloud.callFunction({
+      name: "getSignRecord",
+      success: res=>{
+        that.setData({
+          signedRecord: res.result.signedRecord
+        })
+        this.monthInit()
+        this.statusInit()
+      }
+    })
   },
   monthInit: function(){
     var monthArr = []
@@ -43,27 +56,17 @@ Page({
     this.setData({
       monthArr: monthArr
     })
-    console.log(monthArr)
+
   },
   statusInit: function(){
     var now = new Date()
     var y = now.getFullYear()
     var m = now.getMonth()
     var d = now.getDate()
-    console.log(d)
+
     var monthArr = this.data.monthArr
 
-    for(let j of monthArr){
-      if(y != j.year) continue;
-      if(m != j.month) continue;
-      else{
-        var k = 0
-        while(!(j.dateArr[k].dateNum)) k++
-        j.dateArr[k-1+d].status = 2
-      }
-    }
-
-    for(let i of this.data.signed){
+    for(let i of this.data.signedRecord){
         for(let j of monthArr){
           if(i.year != j.year) continue;
           if(i.month != j.month) continue;
@@ -74,10 +77,18 @@ Page({
           }
         }
     }
+    for (let j of monthArr) {
+      if (y != j.year) continue;
+      if (m != j.month) continue;
+      else {
+        var k = 0
+        while (!(j.dateArr[k].dateNum)) k++
+        j.dateArr[k - 1 + d].status = 2
+      }
+    }
     this.setData({
       monthArr: monthArr
     })
-    console.log(monthArr)
   },
   dateInit: function (setYear, setMonth) {
     //全部时间的月份都是按0~11基准，显示月份才+1
