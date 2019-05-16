@@ -153,13 +153,16 @@ Page({
     })
     // console.log("query="+word)
     //查询单词等待回调
+    wx.showLoading({
+      title: '正在查询单词',
+    })
     wx.cloud.callFunction({
       name: 'getWord',
       data: {
         name : word
       },
       success: res => {
-        console.log(res)
+        wx.hideLoading()
         if (!res.result.valid) {
           wx.showToast({
             title: '无该单词信息',
@@ -176,6 +179,7 @@ Page({
         }
       },
       fail: err => {
+        wx.hideLoading()
         wx.showToast({
           title: '获取单词信息失败',
           icon: 'none',
