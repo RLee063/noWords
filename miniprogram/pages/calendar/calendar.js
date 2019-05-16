@@ -28,14 +28,31 @@ Page({
   },
   onLoad: function () {
     var that = this
+    wx.showLoading({
+      title: '获取打卡信息',
+    })
     wx.cloud.callFunction({
       name: "getSignRecord",
       success: res=>{
+        wx.hideLoading()
         that.setData({
           signedRecord: res.result.signedRecord
         })
         this.monthInit()
         this.statusInit()
+      },
+      fail: e=>{
+        wx.hideLoading()
+        wx.showToast({
+          title: '获取单词信息失败',
+          icon: 'none',
+          duration: 2000
+        })
+        setTimeout(()=>{
+          wx.navigateBack({
+            delta: -1
+          })
+        }, 2000)
       }
     })
   },
