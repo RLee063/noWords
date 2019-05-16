@@ -10,7 +10,8 @@ Page({
   data: {
     wordInfo: [],
     queryWordInfo: [],
-    isQuery: false
+    isQuery: false,
+    ready: false
   },
 
   /**
@@ -18,7 +19,9 @@ Page({
    */
   onLoad: function (options) {
     that = this;
-    console.log(options.Wid)
+    wx.showLoading({
+      title: '正在查询单词',
+    })
     wx.cloud.callFunction({
       name: 'getWord',
       data: {
@@ -26,6 +29,7 @@ Page({
         name: options.name
       },
       success: res => {
+        wx.hideLoading()
         console.log(res)
         if(!res.result.valid){
           wx.showToast({
@@ -39,12 +43,18 @@ Page({
             })
           },2000)
         }
-        that.setData({
-          wordInfo: res.result.wordInfo
-        })
-        this.initMagicSentence();
+        else{
+          console.log(res)
+          that.setData({
+            wordInfo: res.result.wordInfo,
+            ready: true,
+            cloud: res.result.wordInfo.vector ? true : false
+          })
+          this.initMagicSentence();
+        }
       },
       fail: err => {
+        wx.hideLoading()
         wx.showToast({
           title: '获取单词信息失败',
           icon: 'none',
@@ -156,5 +166,11 @@ Page({
     wx.navigateTo({
       url: '../wordInfo/wordInfo?name=' + that.data.queryWordInfo.name,
     })
+  },
+
+  viewCloud: function(){
+    wx.navigateTo({
+      url: '../cloud2/cloud2?name=' + that.data.wordInfo.name,
+    })    
   }
 })

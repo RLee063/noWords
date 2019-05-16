@@ -247,7 +247,7 @@
   font-weight: bold;
 }
 
-.button-next{
+.button-cloud, .button-status{
     width: 86%;
     text-align: center;
     border-radius: 5.5%  / 50% ;
@@ -258,6 +258,11 @@
     bottom: 5%;
     left: 7%;
     background:#18bd99;
+}
+
+.button-cloud{
+    bottom: 12%;
+    background: rgb(255, 140, 105);
 }
 
 .query-container{
