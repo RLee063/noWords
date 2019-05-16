@@ -9,97 +9,11 @@ App({
         traceUser: true,
       })
     }
-    this.initTask();
-    this.globalData = {}
   },
 
-  initTask: function() {
-    var lastLoginDate;
-    // if(lastLoginDate = wx.getStorageSync('lastLoginDate')){
-    //   if(this.isToday(lastLoginDate)){
-    //     return;
-    //   }
-    // }
-    this.setNewDate();
-    this.setNewTask();
-  },
 
-  isToday: function(dateCmp){
-    var today = new Date();
-    if(today.getFullYear() == dateCmp.year){
-      if(today.getMonth() == dateCmp.month){
-        if(today.getDay() == dateCmp.day){
-          return true;
-        }
-      }
-    }
-    return false;
-  },
 
-  setNewDate: function () {
-    var today = new Date();
-    var date = {
-      year : today.getFullYear(),
-      month : today.getMonth(),
-      day : today.getDay()
-    }
-    wx.setStorageSync('lastLoginDate', date);
-  },
 
-  setNewTask: function() {
-    console.log("here")
-    wx.cloud.callFunction({
-      name: 'getDailyTask',
-      data: {
-      },
-      success: res => {
-        console.log(res)
-        wx.setStorageSync('task', res.result.task)
-        this.resetProgress(res.result.task);
-      },
-      fail: err => {
-        console.log(err)
-        wx.showToast({
-          title: '获取任务失败',
-          icon: 'none',
-          duration: 2000
-        })
-      }
-    })
-  },
 
-  resetProgress: function(task) {
-    console.log(task)
-    var progress1 = {
-      globalTimeCount: 0,
-      localTimeCount: 0,
-      complete: false,
-      totalNum: 0,
-      unstudyWords: [],
-      studingWords: [],
-      studiedWords: [],
-      easyWords: [],
-      startTime: (new Date()).getTime()
-    }
-    var progress2 = {
-      type: 0,
-      globalTimeCount: 0,
-      localTimeCount: 0,
-      complete: false,
-      totalNum: 0,
-      unstudyWords: [],
-      studingWords: [],
-      studiedWords: [],
-      easyWords: [],
-      startTime: (new Date()).getTime()
-    }
-    progress1.totalNum = task.newWords.length;
-    progress1.unstudyWords = task.newWords;
-    progress1.type = 0
-    wx.setStorageSync('newWordsProgress', progress1);
-    progress2.totalNum = task.oldWords.length;
-    progress2.unstudyWords = task.oldWords;
-    progress2.type = 1
-    wx.setStorageSync('oldWordsProgress', progress2);
-  }
+
 })
