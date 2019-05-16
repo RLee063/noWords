@@ -19,7 +19,7 @@ Page({
     var lastLoginDate;
     if(lastLoginDate = wx.getStorageSync('lastLoginDate')){
       if(this.isToday(lastLoginDate)){
-        setInterval(() => {
+        setTimeout(() => {
           wx.switchTab({
             url: '../home/home',
           })
@@ -104,7 +104,7 @@ Page({
     progress2.unstudyWords = task.oldWords;
     progress2.type = 1
     wx.setStorageSync('oldWordsProgress', progress2);
-    setInterval(() => {
+    setTimeout(() => {
       wx.switchTab({
         url: '../home/home',
       })
