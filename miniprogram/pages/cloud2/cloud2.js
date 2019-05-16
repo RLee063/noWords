@@ -4,6 +4,7 @@ var angleZ = Math.PI / 200
 const app = getApp()
 const size = 450
 var that 
+var interval
 Page({
 
   /**
@@ -62,7 +63,7 @@ Page({
         words[i].center = true
       }
     }
-    setInterval(() => {
+    interval = setInterval(() => {
       var cosx = Math.cos(angleX)
       var sinx = Math.sin(angleX)
       var cosy = Math.cos(angleY)
@@ -90,7 +91,6 @@ Page({
         this.setData({
           wordList: words
         })
-        console.log(that.data.wordList)
       }
     }, 100)
   },
@@ -120,7 +120,7 @@ Page({
    * 生命周期函数--监听页面卸载
    */
   onUnload: function () {
-
+    clearInterval(interval)
   },
 
   /**
@@ -175,19 +175,47 @@ Page({
       }
     }
     // console.log("query="+word)
-
-    var wordInfo = {}
-    wordInfo.name = word;
-    wordInfo.sentence = 'not a big X';
-    wordInfo.meaning = "n. 字幕";
-    wordInfo.soundmark = "/a'res/";
-    wordInfo.sentenceMeaning = "且随疾风前行";
     //查询单词等待回调
-    console.log(wordList)
-    this.setData({
-      queryWordInfo: wordInfo,
-      wordList: wordList,
-      isQuery: true
+    wx.showLoading({
+      title: '正在查询单词',
+    })
+    wx.cloud.callFunction({
+      name: 'getWord',
+      data: {
+        name: word
+      },
+      success: res => {
+        wx.hideLoading()
+        console.log(res)
+        if (!res.result.valid) {
+          wx.showToast({
+            title: '无该单词信息',
+            icon: 'none',
+            duration: 2000
+          })
+        }
+        else {
+          console.log("?")
+          that.setData({
+            queryWordInfo: res.result.wordInfo,
+            isQuery: true,
+            wordList: wordList
+          })
+        }
+      },
+      fail: err => {
+        wx.hideLoading()
+        wx.showToast({
+          title: '获取单词信息失败',
+          icon: 'none',
+          duration: 2000
+        })
+      }
+    })
+  },
+  viewQueryWordInfo: function (e) {
+    wx.navigateTo({
+      url: '../wordInfo/wordInfo?name=' + that.data.queryWordInfo.name,
     })
   },
 })
