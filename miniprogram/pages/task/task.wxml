@@ -4,18 +4,18 @@
         <text class="plan-guide-text-left">我的学习任务</text>
         <text class="plan-guide-text-right">正在学</text>
         <view class="plan-now-block">
-            <view class="plan-now-book-image-container" bindtap='toDictionary'>
+            <view class="plan-now-book-image-container" data-bid="{{currentBookInfo.Bid}}" bindtap='toDictionary'>
                 <image class="plan-now-book-image" src="{{currentBookInfo.imgUrl}}"/>
             </view>
             <view class="plan-now-book-info">
                 <view class="plan-now-book-name-text">{{currentBookInfo.name}}</view>
                 <view class="plan-now-text-container">
                     <text class="plan-now-text">每天</text>
-                    <text class="plan-now-text">{{currentBookInfo.plan.new}}</text>
+                    <text class="plan-now-text">{{plan}}</text>
                     <text class="plan-now-text">新词</text>
                 </view>
                 <view class="plan-now-change-icon-container">
-                    <image class="plan-now-change-icon" src="../../images/icons/email.png" catchtap='toPlanPage'/>
+                    <image class="plan-now-change-icon" src="../../images/icons/email.png" data-bid="{{currentBookInfo.Bid}}" catchtap='toPlanPage'/>
                 </view>
                 <view class="plan-now-progress-text-container">
                     <view class="plan-now-progress-text">
@@ -28,7 +28,7 @@
                 </view>
                 <view class="plan-now-progress-bar-container">
                     <view class="plan-now-progress-bar"/>
-                    <view class="plan-now-progress-bar-mask"/>
+                    <view class="plan-now-progress-bar-mask" style='width:{{100*(currentBookInfo.studiedNum/currentBookInfo.totalNum)}}%;'/>
                 </view>
             </view>
         </view>
@@ -38,24 +38,20 @@
             <text class="books-guide-text">我的单词书</text>
             <view class="books-add-button" catchtap="toLibrary">添加新书</view>
         </view>
-        <view class="books-container" wx:for="{{myBooksList}}" wx:key="{{item.name}}">
-            <view class="books-image-container" bindtap="toDictionary">
+        <view class="books-container" wx:for="{{myBooksList}}" wx:key="{{item.name}}" >
+            <view class="books-image-container" data-bid="{{item.Bid}}" bindtap="toDictionary">
                 <image class="books-image" src="{{item.imgUrl}}" />
             </view>
             <view class="books-info-container">
                 <view class="books-name-text">{{item.name}}</view>
                 <view class="books-progress-text">
-                    <text >已完成：</text>
-                    <text >{{item.studiedNum}}</text>
-                    <text >/</text>
-                    <text >{{item.totalNum}}</text>
-                    <text >词</text>
+                    <text >总词数：{{item.totalNum}}</text>
                 </view>
                 <view class="books-info-bottom">
-                    <view class="books-delete-icon-container">
+                    <view class="books-delete-icon-container" data-bid="{{item.Bid}}" catchtap="removeBook">
                         <image class="books-delete-icon" src="../../images/icons/star.png" />
                     </view>
-                    <view class="books-select-button">切换</view>
+                    <view class="books-select-button" data-bid="{{item.Bid}}" catchtap="switchChosen">切换</view>
                 </view>
             </view>
         </view>

@@ -80,7 +80,6 @@
 .vocabulary-container{
     width: 90%;
     height: 230rpx;
-    background-image: linear-gradient(-60deg, #ff5858 0%, #f09819 100%);
     margin-top: 70rpx;
     border-radius: 30rpx;
     position: relative;

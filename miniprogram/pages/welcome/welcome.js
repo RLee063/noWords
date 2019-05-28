@@ -53,7 +53,7 @@ Page({
   },
   setNewTask: function () {
     wx.cloud.callFunction({
-      name: 'getDailyTask',
+      name: 'getTask',
       data: {
       },
       success: res => {
@@ -104,6 +104,7 @@ Page({
     progress2.unstudyWords = task.oldWords;
     progress2.type = 1
     wx.setStorageSync('oldWordsProgress', progress2);
+    wx.setStorageSync('studyTime', 0)
     setTimeout(() => {
       wx.switchTab({
         url: '../home/home',

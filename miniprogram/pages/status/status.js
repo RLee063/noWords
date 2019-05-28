@@ -30,10 +30,10 @@ Page({
    * 页面的初始数据
    */
   data: {
-    totalNum: 8110,
-    masterNum: 7559,
-    studingNum: 249,
-    easyNum: 559,
+    totalNum: 0,
+    masterNum: 0,
+    studingNum: 0,
+    easyNum: 0,
     progress: {
       date:["4.05", "4.06", "4.07", "4.08", "4.09", "4.10", "4.11"],
       total:[1200, 1292, 1412, 1532, 1672, 1921, 2100],
@@ -50,8 +50,33 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    this.drawCanvas1();
-    this.drawCanvas2();
+    wx.showLoading({
+      title: '',
+    })
+  },
+
+  refresh: function(){
+    var that = this
+    wx.cloud.callFunction({
+      name: "getStatus",
+      success: res => {
+        wx.hideLoading()
+        console.log(res)
+        that.setData({
+          totalNum: res.result.totalNum,
+          masterNum: res.result.masterNum,
+          studingNum: res.result.studingNum,
+          easyNum: res.result.easyNum,
+          progress: res.result.progress,
+          stastistics: res.result.stastistics
+        })
+        that.drawCanvas1();
+        that.drawCanvas2();
+      },
+      fail: err => {
+        that.refresh();
+      }
+    })
   },
 
   drawCanvas1: function(e){
@@ -77,7 +102,7 @@ Page({
       ctx1.moveTo(0, y)
       ctx1.lineTo(x, y)
       if(i!=6)
-        ctx1.fillText((listMax(progress.total)-yLabelInc*i).toString(), -ctx1.measureText((listMax(progress.total)-yLabelInc*i).toString()).width-5, y+5)
+        ctx1.fillText(parseInt((listMax(progress.total) - yLabelInc * i)).toString(), -ctx1.measureText(parseInt((listMax(progress.total) - yLabelInc * i)).toString()).width-5, y+5)
     } 
     ctx1.stroke()
     ctx1.draw()
@@ -132,7 +157,7 @@ Page({
       ctx1.moveTo(0, y)
       ctx1.lineTo(x, y)
       if(i!=6)
-        ctx1.fillText((listMax(progress.total)-yLabelInc*i).toString(), -ctx1.measureText((listMax(progress.total)-yLabelInc*i).toString()).width-5, y+5)
+        ctx1.fillText(parseInt((listMax(progress.total)-yLabelInc*i)).toString(), -ctx1.measureText((listMax(progress.total)-yLabelInc*i).toString()).width-5, y+5)
     } 
     ctx1.stroke()
     ctx1.draw()
@@ -168,7 +193,10 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
-
+    wx.showLoading({
+      title: '',
+    })
+    this.refresh()
   },
 
   /**

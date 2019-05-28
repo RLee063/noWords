@@ -19,6 +19,7 @@ Page({
    */
   onLoad: function (options) {
     that = this
+    this.setBookInfo()
   },
 
   setTaskInfo: function(){
@@ -49,14 +50,52 @@ Page({
   },
 
   setBookInfo: function(){
-    var bookInfo = {
-      totalNum: 2340,
-      studiedNum: 242,
-      name : "六级考纲词汇(2019版)",
-      percentage: 12
-    }
-    that.setData({
-      bookInfo: bookInfo
+    wx.showLoading({
+      title: '',
+    })
+    wx.cloud.callFunction({
+      name: "getLibrary",
+      success: res => {
+        var bid
+        for (var i of res.result.Library) {
+          if (i.isChoosen) {
+            console.log(i)
+            bid = i.Bid
+            break
+          } 
+        }
+        wx.cloud.callFunction({
+          name: "getBookInfo",
+          data: {
+            bid: bid
+          },
+          success: res => {
+            wx.hideLoading()
+            var cbinfo = res.result.bookinfo
+            cbinfo.studiedNum = res.result.bookinfo.studiedWords.length + res.result.bookinfo.easyWords.length
+            cbinfo.percentage = parseInt(cbinfo.studiedNum/cbinfo.totalNum*100)
+            that.setData({
+              bookInfo: cbinfo
+            })
+          },
+          fail: err => {
+            wx.hideLoading()
+            wx.showToast({
+              title: '刷新失败',
+              icon: 'none',
+              duration: 2000
+            })
+          }
+        })
+      },
+      fail: err => {
+        wx.hideLoading()
+        wx.showToast({
+          title: '刷新失败',
+          icon: 'none',
+          duration: 2000
+        })
+      }
     })
   },
 
@@ -87,7 +126,25 @@ Page({
   onShow: function () {
     this.setTaskInfo()
     this.setSignedNum()
-    this.setBookInfo()
+
+  },
+
+  setSignedNum: function(){
+    wx.cloud.callFunction({
+      name: "getSignRecord",
+      success: res => {
+        that.setData({
+          signedNum: res.result.signedRecord.length
+        })
+      },
+      fail: e => {
+        wx.showToast({
+          title: '获取打卡记录失败',
+          icon: 'none',
+          duration: 2000
+        })
+      }
+    })
   },
 
   /**
@@ -139,7 +196,7 @@ Page({
 
   toDictionary: function(e){
     wx.navigateTo({
-      url: '../dictionary/dictionary?type='+e.currentTarget.dataset.type,
+      url: '../dictionary/dictionary?type='+e.currentTarget.dataset.type+'&bid='+that.data.bookInfo.Bid,
     })
   }
 })

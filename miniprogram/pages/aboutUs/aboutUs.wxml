@@ -1,0 +1,4 @@
+<!--miniprogram/pages/aboutUs/aboutUs.wxml-->
+<view class="container">
+    <image  class="about-icon" src="../../images/icons/uestc.png"/>
+</view>

@@ -1,5 +1,7 @@
 // miniprogram/pages/dictionary/dictionary.js
 var that
+const db = wx.cloud.database()
+const _ = db.command
 Page({
 
   /**
@@ -9,6 +11,7 @@ Page({
     isMask: 1,
     type: 0,
     tabIndex: 0,
+    page: [0,0,0,0],
     newWordsList: [],
     oldWordsList: [],
     unstudyWordsList: [],
@@ -22,31 +25,185 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
+    console.log(options)
     that = this
     that.setData({
       type : parseInt(options.type)
     })
     var currentWordsList
+    console.log(that.data.type)
     if(that.data.type){
       var task = wx.getStorageSync('task');
       that.setData({
         newWordsList: task.newWords,
-        oldWordsList: task.oldWords,
+        oldWordsList: task.oldWords
       })
       this.setCurrentList(4)
     }
     else{
-      var dictionary = wx.getStorageSync('newWordsProgress')
-      that.setData({
-        unstudyWordsList: dictionary.unstudyWords,
-        studiedWordsList: dictionary.studiedWords,
-        studingWordsList: dictionary.studingWords,
-        easyWordsList: dictionary.easyWords,
+      wx.showLoading({
+        title: '',
       })
-      this.setCurrentList(0)
+      wx.cloud.callFunction({
+        name: "getBookInfo",
+        data:{
+          bid: parseInt(options.bid)
+        },
+        success: res => {
+          console.log(res)
+          wx.hideLoading()
+          that.setData({
+            unstudyWords: res.result.bookinfo.unstudyWords,
+            studiedWords: res.result.bookinfo.studiedWords,
+            studingWords: res.result.bookinfo.studingWords,
+            easyWords: res.result.bookinfo.easyWords
+          })
+          that.initList()
+        },
+        fail: err => {
+          wx.hideLoading()
+          wx.showToast({
+            title: '获取词表失败',
+            icon: 'none',
+            duration: 2000
+          })
+          setTimeout(() => {
+            wx.navigateBack({
+            })
+          }, 2000)
+        }
+      })
     }
   },
-
+  initList: function(e){
+    that.getMore0()
+    that.getMore1()
+    that.getMore2()
+    that.getMore3()
+  },
+  getMore0: function(){
+    wx.showLoading({
+      title: '',
+    })
+    wx.cloud.callFunction({
+      name: "getWordsInfo",
+      data: {
+        widList: that.data.unstudyWords.slice(that.data.page[0] * 20, that.data.page[0] *20 + 20),
+        page: that.data.page[0]
+      },
+      success: res => {
+        console.log(res)
+        wx.hideLoading()
+        that.data.page[0]++;
+        var wl = that.data.unstudyWordsList.concat(res.result.wordList)
+        console.log(wl)
+        that.setData({
+          unstudyWordsList: wl
+        })
+        that.setCurrentList(0)
+      },
+      fail: err => {
+        wx.hideLoading()
+        wx.showToast({
+          title: '获取词表失败',
+          icon: 'none',
+          duration: 2000
+        })
+      }
+    })
+  },
+  getMore1: function () {
+    wx.showLoading({
+      title: '',
+    })
+    wx.cloud.callFunction({
+      name: "getWordsInfo",
+      data: {
+        widList: that.data.studingWords.slice(that.data.page[1] * 20, that.data.page[1] * 20 + 20),
+        page: that.data.page[1]
+      },
+      success: res => {
+        console.log(res)
+        wx.hideLoading()
+        that.data.page[1]++;
+        var wl = that.data.studingWordsList.concat(res.result.wordList)
+        console.log(wl)
+        that.setData({
+          studingWordsList: wl
+        })
+        that.setCurrentList(1)
+      },
+      fail: err => {
+        wx.hideLoading()
+        wx.showToast({
+          title: '获取词表失败',
+          icon: 'none',
+          duration: 2000
+        })
+      }
+    })
+  },
+  getMore2: function () {
+    wx.showLoading({
+      title: '',
+    })
+    wx.cloud.callFunction({
+      name: "getWordsInfo",
+      data: {
+        widList: that.data.studiedWords.slice(that.data.page[2] * 20, that.data.page[2] * 20 + 20),
+        page: that.data.page[2]
+      },
+      success: res => {
+        console.log(res)
+        wx.hideLoading()
+        that.data.page[2]++;
+        var wl = that.data.studiedWordsList.concat(res.result.wordList)
+        console.log(wl)
+        that.setData({
+          studiedWordsList: wl
+        })
+        that.setCurrentList(2)
+      },
+      fail: err => {
+        wx.hideLoading()
+        wx.showToast({
+          title: '获取词表失败',
+          icon: 'none',
+          duration: 2000
+        })
+      }
+    })
+  },
+  getMore3: function () {
+    wx.showLoading({
+      title: '',
+    })
+    wx.cloud.callFunction({
+      name: "getWordsInfo",
+      data: {
+        widList: that.data.easyWords.slice(that.data.page[3] * 20, that.data.page[3] * 20 + 20),
+        page: that.data.page[3]
+      },
+      success: res => {
+        wx.hideLoading()
+        that.data.page[3]++;
+        var wl = that.data.easyWordsList.concat(res.result.wordList)
+        console.log(wl)
+        that.setData({
+          easyWordsList: wl
+        })
+        that.setCurrentList(3)
+      },
+      fail: err => {
+        wx.hideLoading()
+        wx.showToast({
+          title: '获取词表失败',
+          icon: 'none',
+          duration: 2000
+        })
+      }
+    })
+  }, 
   changeList: function(e){
     var index = parseInt(e.currentTarget.dataset.index)
     if(!that.data.type){
@@ -75,9 +232,6 @@ Page({
         that.setCurrentList(5)
       }
     }
-    that.setData({
-      tabIndex: index
-    })
   },
 
   setCurrentList: function(i){
@@ -111,7 +265,8 @@ Page({
     }
 
     that.setData({
-      currentWordsList: currentWordsList
+      currentWordsList: currentWordsList,
+      tabIndex: i
     })
   },
   wordMask: function(e){
@@ -185,7 +340,21 @@ Page({
    * 页面上拉触底事件的处理函数
    */
   onReachBottom: function () {
-
+    if(that.data.type==1) return;
+    switch (that.data.tabIndex){
+      case 0:
+        that.getMore0();
+        break;
+      case 1:
+        that.getMore1();
+        break;
+      case 2:
+        that.getMore2();
+        break;
+      case 3:
+        that.getMore3();
+        break;
+    }
   },
 
   /**

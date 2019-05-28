@@ -30,7 +30,7 @@
         </view>
     </view>
     <view class="options-block">
-        <view class="option">
+        <view class="option" catchtap='toFeedbackPage'>
             <view class="option-icon-container">
                 <image class="option-icon" src="../../images/icons/email.png"/>
             </view>
@@ -39,7 +39,7 @@
                 <image  class="option-icon-right" src="../../images/icons/right.png"/>
             </view>
         </view>
-        <view class="option">
+        <view class="option" catchtap='toAboutUsPage'>
             <view class="option-icon-container">
                 <image class="option-icon" src="../../images/icons/file.png"/>
             </view>
@@ -52,7 +52,7 @@
             <view class="option-icon-container">
                 <image class="option-icon" src="../../images/icons/star.png"/>
             </view>
-            <text class="option-text">分享小程序</text>
+            <button class="option-text-button" open-type='share'>分享小程序</button>
             <view class="option-icon-right-container">
                 <image  class="option-icon-right" src="../../images/icons/right.png"/>
             </view>

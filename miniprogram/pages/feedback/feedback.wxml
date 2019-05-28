@@ -1,0 +1,8 @@
+<!--miniprogram/pages/feedback/feedback.wxml-->
+<view class="section">
+  <text class="guide-text">反馈建议</text>
+  <form bindsubmit="bindFormSubmit">
+    <textarea placeholder="宝贵的建议 不胜感激" name="fb" class="feedback-area" auto-focus/>
+    <button class="submit-button" form-type="submit">提交</button>
+  </form>
+</view>

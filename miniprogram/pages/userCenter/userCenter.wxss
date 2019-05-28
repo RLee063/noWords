@@ -82,12 +82,24 @@
     height: 70rpx;
 }
 
-.option-text{
+.option-text, .option-text-button{
     font-size: 30rpx;
     height: 70rpx;
     line-height: 70rpx;
     margin-left: 20rpx;
     color: #666666;
+}
+
+.option-text-button{
+  background: white;
+  border: none;
+  display: inline;
+  margin-left: -10rpx;
+  z-index: 9;
+}
+
+button[class="option-text-button"]::after{
+  border: 0;
 }
 
 .option-icon-container{
@@ -96,6 +108,7 @@
     float: left;
     margin-top: 5rpx;
     margin-left: 20rpx;
+    z-index: 999;
 }
 
 .option-icon-right-container{
@@ -110,6 +123,7 @@
     position: relative;
     height: 60rpx;
     width: 60rpx;
+    z-index: 999;
 }
 
 .option-icon-right{

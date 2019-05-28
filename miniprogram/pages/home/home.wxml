@@ -3,11 +3,11 @@
     <view class="search-container">
         <input class="search-input" bindinput='searchInput' value='{{searchText}}'/>
         <view class="search-icon-container" bindtap='search'>
-            <image class="search-icon" src="../../images/icons/calendar.png"/>
+            <image class="search-icon" src="../../images/icons/search.png"/>
         </view>
     </view>
     <view class="sign-container">
-        <text class="sign-guide-text">我在扇贝单词学习</text>
+        <text class="sign-guide-text">我在noWords学习</text>
         <text class="sign-num-text">{{signedNum}}</text>
         <text class="sign-num-day-text">天</text>
         <view class="calendar" bindtap='toCalendarPage'>
@@ -29,7 +29,7 @@
             </view>
             <view class="vocabulary-progress-bar-container">
                 <view class="vocabulary-progress-bar"/>
-                <view class="vocabulary-progress-bar-mask"/>
+                <view class="vocabulary-progress-bar-mask" style="width:{{bookInfo.percentage}}%;"/>
             </view>
         </view>
     </view>

@@ -8,6 +8,7 @@ Page({
     isToday: 0,
     isTodayWeek: false,
     todayIndex: 0,
+    totalNum: 0,
     signedRecord:[
       {
         year: 2019,
@@ -24,7 +25,8 @@ Page({
         month: 4,
         day: 16
       }
-    ]
+    ],
+    value : []
   },
   onLoad: function () {
     var that = this
@@ -36,10 +38,14 @@ Page({
       success: res=>{
         wx.hideLoading()
         that.setData({
-          signedRecord: res.result.signedRecord
+          signedRecord: res.result.signedRecord,
+          totalNum: res.result.signedRecord.length
         })
-        this.monthInit()
-        this.statusInit()
+        that.monthInit()
+        that.statusInit()
+        that.setData({
+          value: [4]
+        })
       },
       fail: e=>{
         wx.hideLoading()
@@ -66,14 +72,13 @@ Page({
       month.dateArr = this.dateInit(y, m)
       month.year = y
       month.month = m
-      monthArr.push(month)
+      monthArr.unshift(month)
       y = m - 1 < 0 ? y - 1 : y;
       m = m - 1 < 0 ? 11 : m - 1;
     }
     this.setData({
       monthArr: monthArr
     })
-
   },
   statusInit: function(){
     var now = new Date()

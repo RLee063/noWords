@@ -1,2 +1,8 @@
 <!--miniprogram/welcome/welcome.wxml-->
-<text>miniprogram/welcome/welcome.wxml</text>
+<view class="background-container">
+  <image class="background-image" src="../../images/backgrounds/house.jpg" mode="aspectFill"></image>
+</view>
+
+<view class="guide-container">
+  <text class="guide-text">Great works are performed not by strength but by perseverance.</text>
+</view>

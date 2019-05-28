@@ -29,7 +29,7 @@
     border-radius: 15rpx;
 }
 
-.books-star,.books-unstar{
+.books-star,.books-unstar,.books-invalid{
     position: absolute;
     right: -10rpx;
     top: -10rpx;
@@ -43,6 +43,10 @@
 
 .books-unstar{
     background: none;
+}
+
+.books-invalid{
+    background: rgb(255, 187, 60);
 }
 
 .books-vocabulary{

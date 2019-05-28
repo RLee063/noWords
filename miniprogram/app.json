@@ -1,17 +1,19 @@
 {
   "pages": [
-            "pages/home/home",
-            "pages/plan/plan",
-        "pages/task/task",
-
+    "pages/welcome/welcome",
+    "pages/task/task",
+    "pages/home/home",
+    "pages/plan/plan",
+    "pages/library/library", 
+                    
+        "pages/feedback/feedback",
+        "pages/remind/remind",
+    "pages/aboutUs/aboutUs",
     "pages/calendar/calendar",
     "pages/main/main",
     "pages/status/status",
-
     "pages/dictionary/dictionary",
     "pages/wordInfo/wordInfo",
-    "pages/remind/remind",
-
     "pages/userCenter/userCenter",
     "pages/index/index",
     "pages/userConsole/userConsole",
@@ -20,14 +22,13 @@
     "pages/addFunction/addFunction",
     "pages/deployFunctions/deployFunctions",
     "pages/chooseLib/chooseLib",
-    "pages/library/library",
     "pages/cloud/cloud"
   ],
   "window": {
     "backgroundColor": "#F6F6F6",
     "backgroundTextStyle": "light",
     "navigationBarBackgroundColor": "#F6F6F6",
-    "navigationBarTitleText": "云开发 QuickStart",
+    "navigationBarTitleText": "noWords",
     "navigationBarTextStyle": "black"
   },
   "tabBar": {
@@ -45,5 +46,6 @@
         "text": "user"
       }
     ]
-  }
+  },
+  "sitemapLocation": "sitemap.json"
 }

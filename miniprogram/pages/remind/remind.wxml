@@ -3,12 +3,12 @@
     <text class="guide-text">打卡提醒</text>
     <view class="switch-container">
         <text class="switch-text">已开启</text>
-        <switch  checked color="#7bed9f" style="height: 30px;"/>
+        <switch  checked="{{checked}}" color="#7bed9f" style="height: 30px;" bindchange="switchChange"/>
     </view>
     <text class="guide-text-b">开启打卡提醒，帮你养成背单词好习惯</text>
 </view>
 
-<picker-view indicator-class="set-picker-indicator" class="set-picker">
+<picker-view indicator-class="set-picker-indicator" class="set-picker" value="{{value}}" bindchange="pickerChange">
     <picker-view-column>
         <view class="set-picker-line" wx:for="{{pickerData}}">
             <view class="set-picker-left">

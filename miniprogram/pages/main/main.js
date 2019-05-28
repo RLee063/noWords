@@ -24,11 +24,17 @@ Page({
     isChinese: false,
     isQuery: false,
     summaryList: [],
+    upTotalNum: 0,
+    upStudiedWords: [],
+    upMasterWords: [],
+    upEasyWords: [],
+    upNewWords: [],
     nwn1: 0,
     nwn2: 0,
     own1: 0,
     own2: 0,
-    time: 0
+    time: 0,
+    studyTime: 0
   },
 
   /**
@@ -41,20 +47,35 @@ Page({
     this.initWordInfo();
     this.pronounce();
     console.log(this.data.wordInfo)
+    var studyTime = wx.getStorageSync('studyTime')
+    that.setData({
+      time: studyTime
+    })
     timeIntv = setInterval(()=>{
-      var timeMinute = that.data.time
-      var timeMinuteNow = ((new Date()).getTime() - progress.startTime) / 60000
-      timeMinuteNow = parseInt(timeMinuteNow)
-      if(timeMinuteNow > timeMinute){
-        that.setData({
-          time: timeMinuteNow
-        })
-      }
-    }, 1000)
+      studyTime ++;
+      that.setData({
+        time: studyTime
+      })
+    }, 60000)
   },
 
   onUnload: function (){
     this.saveProgress();
+    wx.setStorageSync('studyTime', that.data.time)
+    wx.cloud.callFunction({
+      name: "updateStatus",
+      data: {
+        totalNum: that.data.upTotalNum,
+        studiedWords: that.data.upStudiedWords,
+        easyWords: that.data.upEasyWords,
+        masterWords: that.data.upMasterWords,
+        newWords: that.data.upNewWords
+      },
+      success: res => {
+      },
+      fail: err => {
+      }
+    })
     clearInterval(timeIntv)
   },
 
@@ -106,16 +127,15 @@ Page({
     }
     else if(pattern == 2){
       if(progress.unstudyWords.length==0&&progress.studingWords.length==0){
-        progress.complete=true;
+        progress.complete = true;
         this.saveProgress();
         if(progress.type==0){
           this.initProgress();
           this.initWordInfo();
         }
         else{
-          wx.navigateBack({
-            delta: 1
-          })
+          this.sign();
+          return
         }
       }
       pattern = 0;
@@ -128,7 +148,33 @@ Page({
     }
 
   },
-
+  sign: function(){
+    wx.showLoading({
+      title: '正在打卡',
+    })
+    wx.cloud.callFunction({
+      name: "sign",
+      success: res => {
+        wx.hideLoading()
+        wx.showToast({
+          title: '打卡成功',
+          icon: 'none',
+          duration: 1000
+        })
+        setTimeout(() => wx.navigateBack({
+        }), 1000)
+      },
+      fail: err => {
+        wx.hideLoading()
+        wx.showToast({
+          title: '打卡失败',
+          icon: 'none',
+          duration: 1000
+        })
+        setTimeout(()=>this.sign(),1000)
+      }
+    })
+  },
   selectWord: function(e) {
     var wordInfo = this.data.wordInfo;
     // wordInfo.magicSentence[e.currentTarget.dataset.index].selected = !wordInfo.magicSentence[e.currentTarget.dataset.index].selected;
@@ -207,12 +253,27 @@ Page({
     progress2 = wx.getStorageSync('oldWordsProgress');
     if (!(progress1.complete)){
       progress = progress1;
+      if (progress.totalNum == 0) {
+        progress.complete = true;
+        this.saveProgress()
+        this.initProgress()
+        return
+      }
       this.updateTopBar()
     }
     else{
       progress = progress2;
+      if(progress.totalNum == 0){
+        progress.complete = true;
+        this.saveProgress()
+        this.sign()
+        return false
+      }
       this.updateTopBar()
     }
+    this.setData({
+      upTotalNum: progress1.totalNum + progress2.totalNum
+    })
   },
 
   updateTopBar: function(){
@@ -249,19 +310,32 @@ Page({
       }
       else{
         if(that.data.isUnknown){
-          progress.studingWords.push(progress.unstudyWords.shift())
+          var word = progress.unstudyWords.shift()
+          word.unMaster = true
+          progress.studingWords.push(word)
         }
         else{
-          progress.studiedWords.push(progress.unstudyWords.shift())
+          var word = progress.unstudyWords.shift()
+          if(!word.unMaster)
+            that.data.upMasterWords.push(word.Wid)
+          if(progress.type==0){
+            that.data.upNewWords.push(word.Wid)
+          }
+          that.data.upStudiedWords.push(word.Wid)
+          progress.studiedWords.push(word)
         }
       }
     }
     else{
       if(that.data.isReviewing){
-        progress.easyWords.push(progress.studingWords.shift())
+        var word = progress.studingWords.shift()
+        progress.easyWords.push(word)
+        that.data.upEasyWords.push(word.Wid)
       }
       else{
-        progress.easyWords.push(progress.unstudyWords.shift())
+        var word = progress.unstudyWords.shift()
+        progress.easyWords.push(word)
+        that.data.upEasyWords.push(word.Wid)
       }
       that.setData({
         isEasy: false

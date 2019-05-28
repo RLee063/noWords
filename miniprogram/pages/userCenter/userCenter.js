@@ -92,5 +92,22 @@ Page({
     wx.navigateBack({
       delta: 0
     })
+  },
+  toFeedbackPage: function(){
+    wx.navigateTo({
+      url: '../feedback/feedback',
+    })
+  },
+  toAboutUsPage: function(){
+    wx.navigateTo({
+      url: '../aboutUs/aboutUs',
+    })
+  },
+  share: function(e){
+    console.log("share")
+    wx.updateShareMenu({
+      withShareTicket: true,
+      success() { }
+    })
   }
 })

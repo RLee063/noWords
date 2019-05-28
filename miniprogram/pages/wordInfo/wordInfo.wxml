@@ -23,7 +23,7 @@
             <view class="text-content">{{wordInfo.sentenceMeaning}}</view>
         </view>
         <view class="blank"/>
-        <view class="button-status" catchtap="nextHandle">添加</view>
+        <view class="button-status" wx:if="{{!wordInfo.Active}}" catchtap="addToTask">添加</view>
         <view class="button-cloud" wx:if="{{cloud}}" catchtap="viewCloud">查看词云</view>
     </view>
 </view>

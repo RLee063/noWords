@@ -104,12 +104,16 @@ Page({
     })
     // console.log("query="+word)
     //查询单词等待回调
+    wx.showLoading({
+      title: '正在查询单词',
+    })
     wx.cloud.callFunction({
       name: 'getWord',
       data: {
         name: word
       },
       success: res => {
+        wx.hideLoading()
         console.log(res)
         if (!res.result.valid) {
           wx.showToast({
@@ -127,6 +131,7 @@ Page({
         }
       },
       fail: err => {
+        wx.hideLoading()
         wx.showToast({
           title: '获取单词信息失败',
           icon: 'none',
@@ -156,10 +161,35 @@ Page({
     })
   },
 
-  nextHandle: function (e) {
-    that.updateWordInfo()
-    that.changePattern()
-    that.updateTopBar()
+  addToTask:function(){
+    wx.showLoading({
+      title: '',
+    })
+    wx.cloud.callFunction({
+      name: "addWord",
+      data: {
+        wid: that.data.wordInfo.Wid
+      },
+      success: res => {
+        wx.hideLoading()
+        that.data.wordInfo.Active = true
+        that.setData({
+          wordInfo: that.data.wordInfo
+        })
+      },
+      fail: err => {
+        wx.hideLoading()
+        wx.showToast({
+          title: '添加失败',
+          icon: 'none',
+          duration: 2000
+        })
+        setTimeout(() => {
+          wx.navigateBack({
+          })
+        }, 2000)
+      }
+    })
   },
 
   viewQueryWordInfo: function (e) {

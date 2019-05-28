@@ -1,4 +1,5 @@
 // miniprogram/pages/library/library.js
+var that
 Page({
 
   /**
@@ -12,40 +13,100 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
+    that = this
     this.refresh()
   },
 
   refresh: function() {
-    var cBookInfo = {
-      name: "六级考纲词汇",
-      plan: {
-        new: 200,
-        old: 400
+    wx.showLoading({
+      title: '',
+    })
+    wx.cloud.callFunction({
+      name: "getLibrary",
+      success: res => {
+        console.log(res)
+        wx.hideLoading()
+        that.setData({
+          booksList: res.result.Library
+        })
       },
-      totalNum: 2340,
-      studiedNum: 242,
-      imgUrl: "../../images/books/book1.png",
-      star: true
-    }
-
-    var booksList = []
-    booksList.push(cBookInfo)
-    cBookInfo.name = "四级词汇"
-    booksList.push(cBookInfo)
-    this.setData({
-      booksList: booksList
+      fail: err => {
+        wx.hideLoading()
+        wx.showToast({
+          title: '获取信息失败',
+          icon: 'none',
+          duration: 2000
+        })
+        setTimeout(() => {
+          wx.navigateBack({
+          })
+        }, 2000)
+      }
     })
   },
 
   star: function(e){
     var booksList = this.data.booksList
     var index = e.currentTarget.dataset.index
-    booksList[index].star = !booksList[index].star
-    this.setData({
-      booksList: booksList
+    if(booksList[index].isAdded){
+      booksList[index].isAdded = false
+      that.setData({
+        booksList: booksList
+      })
+      wx.cloud.callFunction({
+        name: "removeBook",
+        data:{
+          bid: booksList[index].Bid
+        },
+        success: res => {
+        },
+        fail: err => {
+          booksList[index].isAdded = true
+          that.setData({
+            booksList: booksList
+          })
+          wx.showToast({
+            title: '取消收藏失败',
+            icon: 'none',
+            duration: 2000
+          })
+        }
+      })
+    }
+    else{
+      booksList[index].isAdded = true
+      that.setData({
+        booksList: booksList
+      })
+      wx.cloud.callFunction({
+        name: "addBook",
+        data: {
+          bid: booksList[index].Bid
+        },
+        success: res => {
+
+        },
+        fail: err => {
+          wx.showToast({
+            title: '添加收藏失败',
+            icon: 'none',
+            duration: 2000
+          })
+          booksList[index].isAdded = false
+          that.setData({
+            booksList: booksList
+          })
+        }
+      })
+    }
+  },
+  showCant:function(){
+    wx.showToast({
+      title: '正在学习不可取消收藏',
+      icon: 'none',
+      duration: 2000
     })
   },
-
   onReady: function () {
 
   },
@@ -92,9 +153,9 @@ Page({
 
   },
 
-  toDictionary: function () {
+  toDictionary: function (e) {
     wx.navigateTo({
-      url: '../dictionary/dictionary',
+      url: '../dictionary/dictionary?type=0&bid=' + e.currentTarget.dataset.bid,
     })
   },
 })
